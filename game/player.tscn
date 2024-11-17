@@ -1,0 +1,59 @@
+[gd_scene load_steps=11 format=3 uid="uid://c3pho3o116p6r"]
+
+[ext_resource type="Script" path="res://game/player.gd" id="1_o37pj"]
+[ext_resource type="Shader" path="res://game/pause.gdshader" id="2_pbppv"]
+[ext_resource type="PackedScene" uid="uid://c3euwyxin7xcv" path="res://assets/player.blend" id="3_h2qbi"]
+[ext_resource type="Script" path="res://game/character_body_3d.gd" id="4_471m8"]
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_1473d"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_3do36"]
+radius = 0.48
+height = 1.2
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_hywuh"]
+radius = 0.48
+height = 1.2
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_hjmop"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fi4xm"]
+render_priority = 0
+shader = ExtResource("2_pbppv")
+shader_parameter/paused = null
+
+[sub_resource type="QuadMesh" id="QuadMesh_qald3"]
+material = SubResource("ShaderMaterial_fi4xm")
+flip_faces = true
+
+[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("avatar", "cam", "gimbal")]
+script = ExtResource("1_o37pj")
+avatar = NodePath("Avatar")
+cam = NodePath("SpringArm3D/Camera3D")
+gimbal = NodePath("SpringArm3D")
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+tree_root = SubResource("AnimationNodeStateMachine_1473d")
+
+[node name="Avatar" parent="." instance=ExtResource("3_h2qbi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.561174, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_3do36")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+visible = false
+mesh = SubResource("CapsuleMesh_hywuh")
+
+[node name="SpringArm3D" type="SpringArm3D" parent="."]
+shape = SubResource("SphereShape3D_hjmop")
+spring_length = 6.0
+
+[node name="Camera3D" type="Camera3D" parent="SpringArm3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SpringArm3D/Camera3D"]
+visible = false
+mesh = SubResource("QuadMesh_qald3")
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="."]
+script = ExtResource("4_471m8")
